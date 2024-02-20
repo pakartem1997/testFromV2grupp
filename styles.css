@@ -2,11 +2,15 @@
     max-width: 1024px;
     margin: 0 auto;
     padding: 60px;
-    /* background-color: blueviolet; */
+    background-color: blueviolet;
 }
 
 .title{
     font-size: 30px;
+}
+
+.tableContainer{
+    background-color: rgb(143, 26, 26);
 }
 
 .tableTh{
