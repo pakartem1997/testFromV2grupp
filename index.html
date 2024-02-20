@@ -14,19 +14,47 @@
 
   <div class="container">
 
-    <h1 class="title">Title</h1>
+    <header class="header">
+      <nav>
+        <ul class="navigation">
+          <li><a class="navigationLink" href="#">Главная</a></li>
+          <li><a class="navigationLink" href="#">Новости</a></li>
+          <li><a class="navigationLink" href="#">Контакты</a></li>
+          <li><a class="navigationLink" href="#">О нас</a></li>
+        </ul>
+      </nav>
 
-    <div id="tableContainer" class="tableContainer"></div>
+      <div class="menuBtn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </header>
 
-    <div id="barChartContainer">
+    <main class="main">
+      <h1 class="title">Данные о предприятиях</h1>
 
-    </div>
+      <div id="tableContainer" class="tableContainer"></div>
 
-    <div id="columnchart_material" style="width: 800px; height: 600px;"></div>
+      <div id="barChartContainer" style="width: 100%; height: 600px;"></div>
+    </main>
 
     <footer class="footer">
-      Footer
+      <div class="footerContainer">
+
+        <ul class="socialIcons">
+          <li><a class="socialVk" href="#" title="Vk" target="_blank" rel="noopener"><img src="./img/vk.png"></a></li>
+          <li><a class="socialYoutube" href="#" title="Youtube" target="_blank" rel="noopener"><img src="./img/youtybe.png"></a></li>
+          <li><a class="socialInst" href="#" title="Instagram" target="_blank" rel="noopener"><img src="./img/inst.png"></a></li>
+          <li><a class="socialTwitter" href="#" title="Twitter" target="_blank" rel="noopener"><img src="./img/twitter.png"></a></li>
+        </ul>
+
+        <p class="copyright">
+          ©V2grupp
+        </p>
+      </div>
     </footer>
+
   </div>
 
   <script src="script.js"></script>

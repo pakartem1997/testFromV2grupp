@@ -1,22 +1,128 @@
-.container{
-    max-width: 1024px;
-    margin: 0 auto;
-    padding: 60px;
-    background-color: blueviolet;
+.container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 0 60px;
+  /* background-color: blueviolet; */
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
-.title{
-    font-size: 30px;
+.header {
+  flex-shrink: 0;
+  background-color: chocolate;
+  position: relative;
+  padding: 10px;
 }
 
-.tableContainer{
-    background-color: rgb(143, 26, 26);
+.navigation {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
 
-.tableTh{
-    /* font-size: 5px; */
+.navigationLink {
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 600;
+  border: none;
+  color: #000;
 }
 
-.footer{
-    font-size: 30px;
+.menuBtn {
+  display: none;
+}
+
+.menuBtn {
+  width: 30px;
+  height: 30px;
+  position: relative;
+  cursor: pointer;
+  margin-left: 20px;
+  overflow: hidden;
+}
+
+.menuBtn span {
+  width: 30px;
+  height: 2px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #000;
+  transition: all 0.5s;
+}
+
+.menuBtn span:first-child {
+  top: calc(50% - 8px);
+}
+
+.menuBtn span:last-child {
+  top: calc(50% + 8px);
+}
+
+.main {
+  flex-grow: 1;
+}
+
+.title {
+  font-size: 35px;
+  padding: 10px 0;
+  margin-bottom: 20px;
+}
+
+.tableContainer {
+  /* background-color: rgb(143, 26, 26); */
+  margin-bottom: 20px;
+}
+
+.table {
+  border: 1px solid grey;
+  border-collapse: collapse; 
+  font-size: 20px;
+}
+
+td {
+  font-size: 0.8em;
+  padding: 5px 7px;
+  border: 1px solid #a9e2cc;
+}
+
+.tableHead {
+  font-weight: 900;
+}
+
+.indicatorValue {
+  text-align: center;
+}
+
+/* footer */
+.footer {
+  flex-shrink: 0;
+  /* background-color: yellow; */
+  border-top: solid 1px #727070;
+}
+
+.footerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 10px;
+}
+
+.socialIcons {
+  display: flex;
+}
+
+.socialIcons li:not(:last-child) {
+  margin-right: 10px;
+}
+
+.socialIcons img {
+  height: 30px;
+}
+
+.copyright {
+  color: #767676;
+  font-size: 12px;
 }

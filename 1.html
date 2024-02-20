@@ -1,25 +1,38 @@
-<table id="TableA">
-  <tr>
-    <td>Old top row</td>
-  </tr>
-</table>
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load('current', {packages: ['corechart']});
+    google.charts.setOnLoadCallback(drawCharts);
 
-<script type="text/javascript">
-  function addRow(tableID) {
-    // Get a reference to the table
-    var tableRef = document.getElementById(tableID);
+    function drawCharts() {
+      var data = google.visualization.arrayToDataTable([
+        ['Element', 'Density', { role: 'style' }],
+        ['Copper', 8.94, '#b87333'],
+        ['Silver', 10.49, 'silver'],
+        ['Gold', 19.30, 'gold'],
+        ['Platinum', 21.45, 'color: #e5e4e2']
+      ]);
 
-    // Insert a row in the table at row index 0
-    var newRow = tableRef.insertRow(0);
+      var options = {
+        legend: 'none',
+      };
 
-    // Insert a cell in the row at index 0
-    var newCell = newRow.insertCell(0);
-
-    // Append a text node to the cell
-    var newText = document.createTextNode("New top row");
-    newCell.appendChild(newText);
-  }
-
-  // Call addRow() with the ID of a table
-  addRow("TableA");
-</script>
+      var containers = document.getElementsByClassName('chart-container');
+      var titles = ['Chart 1', 'Chart 2', 'Chart 3']; // Заголовки для диаграмм
+      for (var i = 0; i < containers.length; i++) {
+        var chartOptions = Object.assign({ title: titles[i] }, options); // Добавление заголовка к общим опциям
+        var chart = new google.visualization.ColumnChart(containers[i]);
+        chart.draw(data, chartOptions);
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="chart-container" style="width: 200px; height: 150px;"></div>
+  <div class="chart-container" style="width: 200px; height: 150px;"></div>
+  <div class="chart-container" style="width: 200px; height: 150px;"></div>
+  <!-- Добавьте дополнительные контейнеры по мере необходимости -->
+</body>
+</html>

@@ -1,4 +1,4 @@
-let propertiesToKeep = [
+const PROPERTIES_TO_KEEP = [
   "PREDPR_NAIM",
   "REPEAT_ENT",
   "FACTOR_ELIMINATE",
@@ -12,7 +12,7 @@ let propertiesToKeep = [
   "VYP"
 ];
 
-let HEADER_NAMES = [
+const HEADER_NAMES = [
   "предприятие",
   "коэф повторяемости",
   "коэф устраняемости",
@@ -32,8 +32,9 @@ function getData() {
       return response.json();
     })
     .then(data => {
-      let filteredData = data.map(obj => filterObject(obj, propertiesToKeep));
+      let filteredData = data.map(obj => filterObject(obj, PROPERTIES_TO_KEEP));
       createTable(filteredData);
+      createBarChar(filteredData)
     })
     .catch(error => {
       console.error(error);
@@ -51,129 +52,81 @@ function filterObject(originalObject, propertiesToKeep) {
     }, {});
 }
 
-function addCellToRow(row, text) {
+function addCellToRow(row, text, className) {
   let newCell = row.insertCell(-1);
+  if (className) {
+    newCell.className = className;
+  }
   let textOfCell = document.createTextNode(text);
   newCell.appendChild(textOfCell);
 }
 
+function convertToNumber(str) {
+  let num = parseFloat(str);
+  return isNaN(num) ? str : num;
+}
+
 function createTable(data) {
-  console.log(data);
-  let tableContainer = document.getElementById("tableContainer");
-  let table = document.createElement('table');
-  let tableHead = table.createTHead();
-  let tableBody = table.createTBody();
-  let tableHeadRow = tableHead.insertRow();
+  const tableContainer = document.getElementById('tableContainer');
+  const table = document.createElement('table');
+  table.className = 'table';
+  const tableHead = table.createTHead();
+  tableHead.className = 'tableHead';
+  const tableBody = table.createTBody();
+  const tableHeadRow = tableHead.insertRow();
 
-  let newCell = tableHeadRow.insertCell(-1);
-  let newText = document.createTextNode(HEADER_NAMES[0]);
-  newCell.appendChild(newText);
+  addCellToRow(tableHeadRow, HEADER_NAMES[0]);
 
-  for (let i = 0; i < 10; i++) {
-    let row = tableBody.insertRow();
-    let newCell = row.insertCell(-1);
-    let newText = document.createTextNode(HEADER_NAMES[i + 1]);
-    newCell.appendChild(newText);
+  for (let i = 1; i < HEADER_NAMES.length; i++) {
+    addCellToRow(tableBody.insertRow(), HEADER_NAMES[i]);
   }
 
   data.forEach((obj) => {
 
-    let valuesObject = Object.values(obj);
+    const valuesObject = Object.values(obj);
 
-    let newCell = tableHeadRow.insertCell(-1);
-    let newText = document.createTextNode(valuesObject[0]);
-    newCell.appendChild(newText);
+    addCellToRow(tableHeadRow, valuesObject[0]);
 
     for (let i = 0; i < valuesObject.length - 1; i++) {
-      let row = tableBody.rows[i];
-      let newCell = row.insertCell(-1);
-      let newText = document.createTextNode(valuesObject[i + 1]);
-      newCell.appendChild(newText);
+      addCellToRow(tableBody.rows[i], valuesObject[i + 1], 'indicatorValue');
     }
   });
 
   tableContainer.appendChild(table);
 }
 
-    // let valuesFromObject = Object.values(obj);
-    // console.log(
-    //   valuesFromObject
-    // );
-    // console.log(
-    //   obj["PREDPR_NAIM"]
-    // );
+function createBarChar(data) {
+  google.charts.load('current', {'packages':['bar']});
+  google.charts.setOnLoadCallback(drawChart);
 
-    
-// function createTable(data) {
-//     let tableContainer = document.getElementById("tableContainer");
-//     let table = document.createElement('table');
-//     let tableHead = document.createElement('thead');
-//     let tableBody = document.createElement('tbody');
-//     /*
-//         let tableTr = document.createElement('tr');
-//         for (let key in data[0]) {
-//             let tableTh = document.createElement('th')
-//             tableTh.innerHTML = key;
-//             tableTh.className = "tableTh";
-//             tableTr.appendChild(tableTh);
-//         }
-//         tableHead.appendChild(tableTr);
-//     */
+  let processedData = [["Показатели"]];
 
-//     let tableTr = document.createElement('tr');
-//     headlines.forEach((item) => {
-//         let tableTh = document.createElement('th')
-//         tableTh.innerHTML = item;
-//         tableTh.className = "tableTh";
-//         tableTr.appendChild(tableTh);
-//     });
-//     tableHead.appendChild(tableTr);
+  for (let i = 1; i < HEADER_NAMES.length; i++) {
+    processedData.push([HEADER_NAMES[i]]);
+  }
+ 
+  data.forEach((obj) => {
 
-//     data.forEach((obj) => {
-//         let tableTr = document.createElement('tr');
-//         for (let key in obj) {
-//             let tableTh = document.createElement('td')
-//             tableTh.innerHTML = obj[key];
-//             tableTr.appendChild(tableTh);
-//             // ключи
-//             //console.log(key);  // name, age, isAdmin
-//             // значения ключей
-//             //console.log(obj[key]); // John, 30, true
-//         }
-//         tableBody.appendChild(tableTr);
-//     });
+    const valuesObject = Object.values(obj);
 
-//     table.appendChild(tableHead);
-//     table.appendChild(tableBody);
-//     tableContainer.appendChild(table);
-// }
+    for (let i = 0; i < valuesObject.length; i++) {
+      processedData[i].push(convertToNumber(valuesObject[i]));
+    }
 
-// createTable(data);
+  });
 
-// let dataToDisplay = [];
+  function drawChart() {
+    let dataToDisplay = google.visualization.arrayToDataTable(processedData);
 
-// data.forEach(object => {
-//   dataToDisplay.push(Object.values(filterObject(object)));
-// });
+    let options = {
+      chart: {
+        title: 'Company Performance',
+      }
+    };
 
-// google.charts.load('current', { 'packages': ['bar'] });
-// google.charts.setOnLoadCallback(drawChart);
+    let chart = new google.charts.Bar(document.getElementById('barChartContainer'));
 
-// function drawChart() {
-//   var data = google.visualization.arrayToDataTable([
-//     headerNames,
-//     ...dataToDisplay
-//   ]);
-
-//   var options = {
-//     chart: {
-//       title: 'Company Performance',
-//     }
-//   };
-
-//   var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
-
-//   chart.draw(data, google.charts.Bar.convertOptions(options));
-// }
-
+    chart.draw(dataToDisplay, google.charts.Bar.convertOptions(options));
+  }
+}
 
