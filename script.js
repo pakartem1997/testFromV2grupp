@@ -129,4 +129,3 @@ function createBarChar(data) {
     chart.draw(dataToDisplay, google.charts.Bar.convertOptions(options));
   }
 }
-
