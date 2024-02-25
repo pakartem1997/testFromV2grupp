@@ -26,22 +26,28 @@ const HEADER_NAMES = [
   "выполнено"
 ];
 
+getData().then(data => {
+  const filteredData = data.map(obj => filterObject(obj, PROPERTIES_TO_KEEP));
+  buildDataVisualization(filteredData);
+});
+
 function getData() {
-  fetch('./data.json')
+  return fetch('./data.json')
     .then(response => {
       return response.json();
     })
     .then(data => {
-      let filteredData = data.map(obj => filterObject(obj, PROPERTIES_TO_KEEP));
-      createTable(filteredData);
-      createBarChar(filteredData)
+      return data;
     })
     .catch(error => {
       console.error(error);
     });
 }
 
-getData();
+function buildDataVisualization(data) {
+  createTable(data);
+  createBarChar(data);
+}
 
 function filterObject(originalObject, propertiesToKeep) {
   return Object.keys(originalObject)
@@ -52,13 +58,12 @@ function filterObject(originalObject, propertiesToKeep) {
     }, {});
 }
 
-function addCellToRow(row, text, className) {
-  let newCell = row.insertCell(-1);
-  if (className) {
-    newCell.className = className;
-  }
-  let textOfCell = document.createTextNode(text);
-  newCell.appendChild(textOfCell);
+function addCellToRow(row, text, isHeader = false) {
+  const cell = isHeader ? document.createElement('th') : document.createElement('td');
+  const textOfTd = document.createTextNode(text);
+  cell.appendChild(textOfTd);
+  row.appendChild(cell);
+  return cell;
 }
 
 function convertToNumber(str) {
@@ -75,20 +80,24 @@ function createTable(data) {
   const tableBody = table.createTBody();
   const tableHeadRow = tableHead.insertRow();
 
-  addCellToRow(tableHeadRow, HEADER_NAMES[0]);
+  const cell = addCellToRow(tableHeadRow, HEADER_NAMES[0], true);
+  cell.className = "tableHeaderCell";
 
   for (let i = 1; i < HEADER_NAMES.length; i++) {
-    addCellToRow(tableBody.insertRow(), HEADER_NAMES[i]);
+    const cell = addCellToRow(tableBody.insertRow(), HEADER_NAMES[i]);
+    cell.className = "tableParameterCell";
   }
 
   data.forEach((obj) => {
-
     const valuesObject = Object.values(obj);
-
-    addCellToRow(tableHeadRow, valuesObject[0]);
+    const businessName = valuesObject[0];
+    const cell = addCellToRow(tableHeadRow, businessName);
+    cell.className = "tableHeaderCell";
 
     for (let i = 0; i < valuesObject.length - 1; i++) {
-      addCellToRow(tableBody.rows[i], valuesObject[i + 1], 'indicatorValue');
+      const cell = addCellToRow(tableBody.rows[i], valuesObject[i + 1]);
+      cell.setAttribute('data-label', businessName);
+      cell.className = "indicatorValue";
     }
   });
 
@@ -96,15 +105,15 @@ function createTable(data) {
 }
 
 function createBarChar(data) {
-  google.charts.load('current', {'packages':['bar']});
-  google.charts.setOnLoadCallback(drawChart);
+  google.charts.load('current', { packages: ['corechart'] });
+  google.charts.setOnLoadCallback(drawCharts);
 
   let processedData = [["Показатели"]];
 
   for (let i = 1; i < HEADER_NAMES.length; i++) {
     processedData.push([HEADER_NAMES[i]]);
   }
- 
+
   data.forEach((obj) => {
 
     const valuesObject = Object.values(obj);
@@ -115,17 +124,32 @@ function createBarChar(data) {
 
   });
 
-  function drawChart() {
-    let dataToDisplay = google.visualization.arrayToDataTable(processedData);
-
-    let options = {
-      chart: {
-        title: 'Company Performance',
-      }
+  function drawCharts() {
+    const options = {
+      legend: { position: 'bottom' },
     };
 
-    let chart = new google.charts.Bar(document.getElementById('barChartContainer'));
+    for (let i = 0; i < processedData.length; i++) {
 
-    chart.draw(dataToDisplay, google.charts.Bar.convertOptions(options));
+      const data = google.visualization.arrayToDataTable([
+        processedData[0],
+        processedData[i + 1]
+      ]);
+
+      const newDiv = document.createElement('div');
+      newDiv.className = 'chartContainer';
+      document.getElementById('barChartContainer').appendChild(newDiv);
+      const chartOptions = Object.assign(options);
+      const chart = new google.visualization.ColumnChart(newDiv);
+      chart.draw(data, chartOptions);
+    }
   }
 }
+
+const menuBtn = document.querySelector('.menuBtn');
+const navigation = document.querySelector('.navigation');
+
+menuBtn.addEventListener('click', function () {
+  menuBtn.classList.toggle('active');
+  navigation.classList.toggle('active');
+});
