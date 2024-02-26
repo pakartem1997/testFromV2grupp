@@ -34,6 +34,9 @@ getData().then(data => {
 function getData() {
   return fetch('./data.json')
     .then(response => {
+      if (!response.ok) {
+        throw new Error('Error occurred!')
+      }
       return response.json();
     })
     .then(data => {
@@ -41,6 +44,7 @@ function getData() {
     })
     .catch(error => {
       console.error(error);
+      return {};
     });
 }
 
@@ -129,8 +133,7 @@ function createBarChar(data) {
       legend: { position: 'bottom' },
     };
 
-    for (let i = 0; i < processedData.length; i++) {
-
+    for (let i = 0; i < processedData.length - 1; i++) {
       const data = google.visualization.arrayToDataTable([
         processedData[0],
         processedData[i + 1]
